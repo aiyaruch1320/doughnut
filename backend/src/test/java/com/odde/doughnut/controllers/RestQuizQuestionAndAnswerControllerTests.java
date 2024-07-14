@@ -577,4 +577,16 @@ class RestQuizQuestionAndAnswerControllerTests {
       assertFalse(approvedQuestion.isApproved());
     }
   }
+
+  @Nested
+  class UpdateQuestion {
+    @Test
+    void authorization() {
+      Note note = makeMe.aNote().please();
+      QuizQuestionAndAnswer mcqWithAnswer = makeMe.aQuestion().please();
+      assertThrows(
+          UnexpectedNoAccessRightException.class,
+          () -> controller.updateQuestion(note, mcqWithAnswer));
+    }
+  }
 }
