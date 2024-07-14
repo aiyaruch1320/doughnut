@@ -588,5 +588,14 @@ class RestQuizQuestionAndAnswerControllerTests {
           UnexpectedNoAccessRightException.class,
           () -> controller.updateQuestion(note, mcqWithAnswer));
     }
+
+    @Test
+    void updateQuestion() throws UnexpectedNoAccessRightException {
+      Note note = makeMe.aNote().creatorAndOwner(currentUser).please();
+      QuizQuestionAndAnswer mcqWithAnswer = makeMe.aQuestion().please();
+      QuizQuestionAndAnswer questionResponse = controller.updateQuestion(note, mcqWithAnswer);
+      makeMe.refresh(note);
+      assertEquals(mcqWithAnswer, questionResponse);
+    }
   }
 }
