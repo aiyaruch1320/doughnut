@@ -50,6 +50,11 @@
                 />
               </template>
             </PopButton>
+            <button
+              class="btn btn-danger"
+              @click="deleteQuestion(question)"
+            >X
+            </button>
           </td>
           <td>{{ question.quizQuestion.multipleChoicesQuestion.stem }}</td>
           <template
@@ -113,6 +118,15 @@ const questionUpdated = (updatedQuestion: QuizQuestionAndAnswer) => {
 const toggleApproval = async (questionId?: number) => {
   if (questionId) {
     await managedApi.restQuizQuestionController.toggleApproval(questionId)
+  }
+}
+const deleteQuestion = async (deleteQuestion: QuizQuestionAndAnswer) => {
+  const confirmed = window.confirm("Are you sure you want to delete this question?")
+  if (confirmed && deleteQuestion) {
+    await managedApi.restQuizQuestionController.deleteQuestion(props.note.id, deleteQuestion)
+    questions.value = questions.value.filter(
+      (question) => question.id !== deleteQuestion.id
+    )
   }
 }
 onMounted(() => {
