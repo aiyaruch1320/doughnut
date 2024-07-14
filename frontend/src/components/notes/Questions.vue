@@ -16,6 +16,7 @@
       <thead>
         <tr>
           <th>Approved</th>
+          <th>Action</th>
           <th>Question Text</th>
           <th>A</th>
           <th>B</th>
@@ -35,6 +36,20 @@
               v-model="question.approved"
               @change="toggleApproval(question.id)"
             />
+          </td>
+          <td>
+            <PopButton btn-class="btn btn-primary" title="Edit">
+              <!-- prettier-ignore -->
+              <template #default="{ closer }">
+                <NoteAddQuestion
+                  v-bind="{ note, question }"
+                  @close-dialog="
+                    closer($event);
+                    questionUpdated($event);
+                  "
+                />
+              </template>
+            </PopButton>
           </td>
           <td>{{ question.quizQuestion.multipleChoicesQuestion.stem }}</td>
           <template
@@ -83,6 +98,17 @@ const questionAdded = (newQuestion: QuizQuestionAndAnswer) => {
     return
   }
   questions.value.push(newQuestion)
+}
+const questionUpdated = (updatedQuestion: QuizQuestionAndAnswer) => {
+  if (updatedQuestion == null) {
+    return
+  }
+  const index = questions.value.findIndex(
+    (question) => question.id === updatedQuestion.id
+  )
+  if (index > -1) {
+    questions.value[index] = updatedQuestion
+  }
 }
 const toggleApproval = async (questionId?: number) => {
   if (questionId) {

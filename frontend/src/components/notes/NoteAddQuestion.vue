@@ -58,14 +58,19 @@ const props = defineProps({
     type: Object as PropType<Note>,
     required: true,
   },
+  question: {
+    type: Object as PropType<QuizQuestionAndAnswer>,
+    required: false,
+  }
 })
 
 const quizQuestionAndAnswer = ref<QuizQuestionAndAnswer>({
-  correctAnswerIndex: 0,
+  id: props.question?.id ?? null,
+  correctAnswerIndex: props.question?.correctAnswerIndex ?? 0,
   quizQuestion: {
     multipleChoicesQuestion: {
-      stem: "",
-      choices: ["", ""],
+      stem: props.question?.quizQuestion.multipleChoicesQuestion.stem ?? "",
+      choices: props.question?.quizQuestion.multipleChoicesQuestion.choices ?? [],
     },
   },
 } as QuizQuestionAndAnswer)
@@ -78,6 +83,7 @@ const emit = defineEmits(["close-dialog"])
 const isValidQuestion = computed(() =>
   isMCQWithAnswerValid(quizQuestionAndAnswer.value)
 )
+const isEditQuestion =  !!props.question
 const multipleChoicesQuestion = computed(
   () => quizQuestionAndAnswer.value.quizQuestion.multipleChoicesQuestion
 )
@@ -106,11 +112,19 @@ const removeChoice = () => {
 }
 const submitQuestion = async () => {
   const quizQuestion = quizQuestionAndAnswer.value
-  const response =
-    await managedApi.restQuizQuestionController.addQuestionManually(
+  let response: QuizQuestionAndAnswer;
+  if (isEditQuestion) {
+    response = await managedApi.restQuizQuestionController.updateQuestion(
       props.note.id,
       quizQuestion
     )
+  } else {
+    response = await managedApi.restQuizQuestionController.addQuestionManually(
+      props.note.id,
+      quizQuestion
+    )
+  }
+  
   emit("close-dialog", response)
 }
 const refineQuestion = async () => {
