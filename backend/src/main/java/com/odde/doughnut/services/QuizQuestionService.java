@@ -65,4 +65,9 @@ public class QuizQuestionService {
     }
     return modelFactoryService.save(question);
   }
+
+  public QuizQuestionAndAnswer deleteQuestion(QuizQuestionAndAnswer question) {
+    modelFactoryService.remove(question);
+    return question;
+  }
 }

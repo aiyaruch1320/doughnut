@@ -598,4 +598,25 @@ class RestQuizQuestionAndAnswerControllerTests {
       assertEquals(mcqWithAnswer, questionResponse);
     }
   }
+
+  @Nested
+  class DeleteQuestion {
+    @Test
+    void authorization() {
+      Note note = makeMe.aNote().please();
+      QuizQuestionAndAnswer mcqWithAnswer = makeMe.aQuestion().please();
+      assertThrows(
+          UnexpectedNoAccessRightException.class,
+          () -> controller.deleteQuestion(note, mcqWithAnswer));
+    }
+
+    @Test
+    void updateQuestion() throws UnexpectedNoAccessRightException {
+      Note note = makeMe.aNote().creatorAndOwner(currentUser).please();
+      QuizQuestionAndAnswer mcqWithAnswer = makeMe.aQuestion().please();
+      QuizQuestionAndAnswer questionResponse = controller.deleteQuestion(note, mcqWithAnswer);
+      makeMe.refresh(note);
+      assertEquals(mcqWithAnswer, questionResponse);
+    }
+  }
 }
